@@ -17,6 +17,8 @@ import android.widget.Toast;
 import id.putraprima.retrofit.R;
 import id.putraprima.retrofit.api.helper.ServiceGenerator;
 import id.putraprima.retrofit.api.models.AppVersion;
+import id.putraprima.retrofit.api.models.LoginRequest;
+import id.putraprima.retrofit.api.models.LoginResponse;
 import id.putraprima.retrofit.api.services.ApiInterface;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
     public static final String NAME_KEY="name";
     public static final String VERSION_KEY="version";
     private static SharedPreferences pref;
+    private LoginRequest loginRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,5 +130,7 @@ public class SplashActivity extends AppCompatActivity {
         pref=PreferenceManager.getDefaultSharedPreferences(context);
         pref.edit().putString(VERSION_KEY, appVer).apply();
     }
+
+
 
 }
