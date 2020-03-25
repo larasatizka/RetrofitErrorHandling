@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import id.putraprima.retrofit.R;
+import id.putraprima.retrofit.RegisterActivity;
 import id.putraprima.retrofit.api.helper.ServiceGenerator;
 import id.putraprima.retrofit.api.models.AppVersion;
 import id.putraprima.retrofit.api.models.LoginRequest;
@@ -94,8 +95,6 @@ public class SplashActivity extends AppCompatActivity {
                         String appName = getAppName(SplashActivity.this);
                         String appVersion = getAppVersion(SplashActivity.this);
                         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                        intent.putExtra(NAME_KEY, appName);
-                        intent.putExtra(VERSION_KEY, appVersion);
                         startActivity(intent);
                     }
                 }
