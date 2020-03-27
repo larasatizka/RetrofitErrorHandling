@@ -1,18 +1,13 @@
 package id.putraprima.retrofit.api.models;
 
-public class Profile {
-    public int id;
-    public String name, email;
+public class ProfileResponse {
+    int id;
+    String email, name;
 
-    public Profile(int id, String name, String email) {
+    public ProfileResponse(int id, String email, String name) {
         this.id = id;
-        this.name = name;
         this.email = email;
-    }
-
-    public Profile(String name, String email) {
         this.name = name;
-        this.email = email;
     }
 
     public int getId() {
@@ -23,19 +18,19 @@ public class Profile {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

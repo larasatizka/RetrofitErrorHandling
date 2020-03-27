@@ -1,16 +1,11 @@
 package id.putraprima.retrofit.api.models;
 
-public class Profile {
-    public int id;
-    public String name, email;
+public class PasswordResponse {
+    int id;
+    String name, email;
 
-    public Profile(int id, String name, String email) {
+    public PasswordResponse(int id, String name, String email) {
         this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
-    public Profile(String name, String email) {
         this.name = name;
         this.email = email;
     }

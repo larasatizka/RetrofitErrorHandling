@@ -48,7 +48,7 @@
         android:height="75dp"
         android:ems="10"
         android:hint="password"
-        android:inputType="textPassword"
+        android:inputType="textEmailAddress"
         app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
