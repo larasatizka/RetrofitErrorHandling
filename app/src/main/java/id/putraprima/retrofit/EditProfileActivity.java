@@ -9,7 +9,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import id.putraprima.retrofit.api.helper.ServiceGenerator;
+import id.putraprima.retrofit.api.models.ApiError;
 import id.putraprima.retrofit.api.models.Data;
+import id.putraprima.retrofit.api.models.ErrorUtils;
 import id.putraprima.retrofit.api.models.LoginRequest;
 import id.putraprima.retrofit.api.models.Profile;
 import id.putraprima.retrofit.api.models.ProfileRequest;
@@ -56,13 +58,16 @@ public class EditProfileActivity extends AppCompatActivity {
         call.enqueue(new Callback<Data<Profile>>() {
             @Override
             public void onResponse(Call<Data<Profile>> call, Response<Data<Profile>> response) {
-                if (name.getText().toString().isEmpty()){
-                    name.setError("Nama harus diisi");
-                } else if(isValidEmail(email.getText().toString())==false || email.getText().toString().isEmpty()){
-                    email.setError("Format email harus benar");
-                } else {
-                    Toast.makeText(EditProfileActivity.this, "Data berhasil diubah", Toast.LENGTH_SHORT).show();
-                }
+               if (response.isSuccessful()){
+                   Toast.makeText(EditProfileActivity.this, "Data berhasil diubah", Toast.LENGTH_SHORT).show();
+               } else{
+                   ApiError error = ErrorUtils.parseError(response);
+                   if (name.getText().toString().isEmpty()){
+                       name.setError(error.getError().getName().get(0));
+                   } else if (email.getText().toString().isEmpty() || isValidEmail(email.getText().toString())==false){
+                       email.setError(error.getError().getEmail().get(0));
+                   }
+               }
 
             }
 

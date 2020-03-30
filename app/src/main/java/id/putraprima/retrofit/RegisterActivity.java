@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import id.putraprima.retrofit.api.helper.ServiceGenerator;
+import id.putraprima.retrofit.api.models.ApiError;
+import id.putraprima.retrofit.api.models.ErrorUtils;
 import id.putraprima.retrofit.api.models.LoginRequest;
 import id.putraprima.retrofit.api.models.LoginResponse;
 import id.putraprima.retrofit.api.models.RegisterRequest;
@@ -52,22 +54,35 @@ public class RegisterActivity extends AppCompatActivity {
     private void register() {
         ApiInterface service = ServiceGenerator.createService(ApiInterface.class);
         Call<RegisterResponse> call = service.doRegister(new RegisterRequest(name.getText().toString(), email.getText().toString(),password.getText().toString(), confirm.getText().toString()));
-        if (name.getText().toString().isEmpty()){
-            name.setError("Nama harus diisi");
-        }else if (password.getText().toString().length()<8 || password.getText().toString().isEmpty()){
-            password.setError("Panjang password minimal 8");
-        } else if(!password.getText().toString().equals(confirm.getText().toString())){
-            password.setError("Konfirmasi password tidak sesuai");
-            confirm.setError("Konfirmasi password tidak sesuai");
-        } else if(isValidEmail(email.getText().toString())==false || email.getText().toString().isEmpty()){
-            email.setError("Format email harus benar");
-        } else {
             call.enqueue(new Callback<RegisterResponse>() {
                 @Override
                 public void onResponse(Call<RegisterResponse> call, Response<RegisterResponse> response) {
-                    Toast.makeText(RegisterActivity.this,"Berhasil register", Toast.LENGTH_SHORT).show();
-                    Intent intent=new Intent(RegisterActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    if (response.isSuccessful()){
+                        Toast.makeText(RegisterActivity.this,"Berhasil register", Toast.LENGTH_SHORT).show();
+                        Intent intent=new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    } else {
+                        ApiError error = ErrorUtils.parseError(response);
+                        if (name.getText().toString().isEmpty()){
+                            name.setError(error.getError().getName().get(0));
+                        } else if (email.getText().toString().isEmpty() || isValidEmail(email.getText().toString())==false){
+                            email.setError(error.getError().getEmail().get(0));
+                        } else if (password.getText().toString().isEmpty()){
+                            if (password.getText().toString().length()<8){
+                                password.setError(error.getError().getPassword().get(0));
+                            } else {
+                                password.setError(error.getError().getPassword().get(0));
+                            }
+                        } else if (!password.getText().toString().equals(confirm.getText().toString())){
+                            password.setError(error.getError().getPassword().get(0));
+                            confirm.setError(error.getError().getPassword().get(0));
+                        }
+
+
+
+
+                    }
+
                 }
 
                 @Override
@@ -75,7 +90,6 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Gagal register", Toast.LENGTH_SHORT).show();
                 }
             });
-        }
     }
 
     public boolean isValidEmail(String email){

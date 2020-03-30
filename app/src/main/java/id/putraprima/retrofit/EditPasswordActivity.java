@@ -9,7 +9,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import id.putraprima.retrofit.api.helper.ServiceGenerator;
+import id.putraprima.retrofit.api.models.ApiError;
 import id.putraprima.retrofit.api.models.Data;
+import id.putraprima.retrofit.api.models.ErrorUtils;
 import id.putraprima.retrofit.api.models.LoginRequest;
 import id.putraprima.retrofit.api.models.PasswordRequest;
 import id.putraprima.retrofit.api.models.PasswordResponse;
@@ -50,17 +52,23 @@ public class EditPasswordActivity extends AppCompatActivity {
         call.enqueue(new Callback<Data<Profile>>() {
             @Override
             public void onResponse(Call<Data<Profile>> call, Response<Data<Profile>> response) {
-                if (pass.getText().toString().length()<8 || pass.getText().toString().isEmpty()){
-                    pass.setError("Panjang password minimal 8");
-                } else if(!pass.getText().toString().equals(conf.getText().toString())){
-                    pass.setError("Konfirmasi password tidak sesuai");
-                    conf.setError("Konfirmasi password tidak sesuai");
+                if (response.isSuccessful()){
+                    Toast.makeText(EditPasswordActivity.this, "Change password success", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (response.body()!=null){
-                        Toast.makeText(EditPasswordActivity.this, "Change password success", Toast.LENGTH_SHORT).show();
+                    ApiError error = ErrorUtils.parseError(response);
+                    if (pass.getText().toString().isEmpty()){
+                        if (pass.getText().toString().length()<8){
+                            pass.setError(error.getError().getPassword().get(0));
+                        } else {
+                            pass.setError(error.getError().getPassword().get(0));
+                        }
+                    } else if (!pass.getText().toString().equals(conf.getText().toString())){
+                        pass.setError(error.getError().getPassword().get(0));
+                        conf.setError(error.getError().getPassword().get(0));
                     }
-
                 }
+
+
 
             }
 

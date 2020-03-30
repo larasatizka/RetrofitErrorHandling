@@ -3,7 +3,9 @@ package id.putraprima.retrofit.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 import id.putraprima.retrofit.ProfileActivity;
 import id.putraprima.retrofit.R;
 import id.putraprima.retrofit.RegisterActivity;
+import id.putraprima.retrofit.api.models.ApiError;
+import id.putraprima.retrofit.api.models.ErrorUtils;
 import id.putraprima.retrofit.api.helper.ServiceGenerator;
 import id.putraprima.retrofit.api.models.LoginRequest;
 import id.putraprima.retrofit.api.models.LoginResponse;
@@ -32,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     EditText email, password;
     private String token, token_type;
     private SplashActivity splash;
+    private LoginRequest log;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,18 +58,38 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<LoginResponse>(){
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                Toast.makeText(MainActivity.this, response.body().getToken(), Toast.LENGTH_SHORT).show();
-                if (response.body().getToken()!=null){
+                if(response.isSuccessful()){
+//                    SharedPreferences preference = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//                    SharedPreferences.Editor editor = preference.edit();
+//                    editor.putString("token",response.body().getToken());
+//                    editor.apply();
+//                    Intent i = new Intent(getApplicationContext(),ProfileActivity.class);
+//                    startActivity(i);
                     token=response.body().getToken();
                     token_type=response.body().getToken_type();
                     Intent intent=new Intent(MainActivity.this, ProfileActivity.class);
                     intent.putExtra(TOKEN_KEY, token);
                     intent.putExtra(TOKEN_TYPE, token_type);
                     startActivity(intent);
+                }else{
+                    ApiError error = ErrorUtils.parseError(response);
+                    if (email.getText().toString().isEmpty()){
+                        email.setError(error.getError().getEmail().get(0));
+                    } else if (password.getText().toString().isEmpty()){
+                        password.setError(error.getError().getPassword().get(0));
+                    } else {
+                        Toast.makeText(MainActivity.this, error.getError().getEmail().get(0), Toast.LENGTH_SHORT).show();
+                    }
+                    //email.setError(error.getError().getEmail().get(0));
+
+
+
                 }
 
 
             }
+
+
 
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
